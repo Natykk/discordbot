@@ -1,0 +1,10 @@
+git+https://github.com/Rapptz/discord.py@rewrite
+certifi == 2020.12.5
+ffmpeg == 1.4
+pynacl == 1.4.0
+youtube-dl == 2020.12.26
+urllib3 == 1.26.2
+cffi == 1.14.4
+discord.py == 1.5.1
+discord == 1.0.1
+requests == 2.25.1

@@ -1,4 +1,4 @@
-git+https://github.com/Rapptz/discord.py@rewrite
+git+https://github.com/Rapptz/discord.py
 certifi == 2020.12.5
 ffmpeg == 1.4
 pynacl == 1.4.0

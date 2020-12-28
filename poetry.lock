@@ -229,7 +229,7 @@ python-versions = "*"
 version = "2020.12.26"
 
 [metadata]
-content-hash = "a2bcd80607f154ad3234da89a38ff30d00d1fd1a630fc08b6e4cced4c61e1210"
+content-hash = "5097b80d0e75b104b296e29aaa892883a6a24101059f624527b56befce77f786"
 python-versions = "^3.8"
 
 [metadata.files]

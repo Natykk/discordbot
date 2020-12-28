@@ -1,0 +1,54 @@
+
+<style>
+body {
+  background-color: whitesmoke;
+  background-image: url("https://www.transparenttextures.com/patterns/lyonnette.png");
+  border-bottom: 0px solid black;
+  height: 600px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}
+
+/* === Wrapper Styles === */
+#FileUpload {
+  display: flex;
+  justify-content: center;
+}
+.wrapper {
+  margin: 30px;
+  padding: 10px;
+  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+  border-radius: 10px;
+  background-color: white;
+  width: px;
+}
+
+/* === Upload Box === */
+.upload {
+  margin: 10px;
+  height: 100px;
+  border: 8px dashed #e6f5e9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+
+.form {
+  margin-top: 35px;
+}
+</style>
+<body>
+<div id="FileUpload">
+  <div class="wrapper">
+    <div class="upload">
+      <form action = "https://discordbot.natykk.repl.co/uploader" method = "POST" 
+         enctype = "multipart/form-data" class="form">
+         <input type = "file" name = "file" value="Parcourir..."/>
+         <input type = "submit" value="Upload"/>
+    </div>
+  </div>
+</div>
+</body>

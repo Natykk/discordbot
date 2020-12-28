@@ -1,4 +1,5 @@
 import random
+import webpage
 import discord
 from discord.ext import tasks, commands
 from discord import File
@@ -6,35 +7,10 @@ import os
 import youtube_dl
 import asyncio
 players = {}
-from flask import Flask
-from threading import Thread
 
-app = Flask('')
-
-@app.route('/')
-def main():
-  return "Your Bot Is Ready"
-  
-
-def run():
-  app.run(host="0.0.0.0", port=8000)
-
-def keep_alive():
-  server = Thread(target=run)
-  server.start()
 
 bot = commands.Bot(command_prefix='!')
 
-status = random.choice(['with Python','JetHub'])
-
-@bot.event
-async def on_ready():
-  change_status.start()
-  print("Your bot is ready")
-
-@tasks.loop(seconds=10)
-async def change_status():
-  await bot.change_presence(activity=discord.Game(next(status)))
 
 
 #----------------------------------
@@ -126,7 +102,6 @@ async def play(ctx, url):
         video = Video(url)
         musics[ctx.guild] = []
         client = await channel.connect()
-        await ctx.send(f"Je lance : {video.url}")
         play_song(client, musics[ctx.guild], video)
 
 #-----------------------------------------------------------
@@ -145,5 +120,5 @@ async def play(ctx, url):
 
 
 
-
+webpage.keep_alive()
 bot.run(os.getenv('TOKEN'))

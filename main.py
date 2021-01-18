@@ -1,9 +1,11 @@
 import random
 import webpage
+import music
 import discord
 from discord.ext import tasks, commands
 from discord import File
 import os
+#import music
 import youtube_dl
 import asyncio
 players = {}
@@ -195,23 +197,41 @@ async def intru(ctx):
   target = await bot.fetch_user(list_joueur[-1])
   await target.send("Tu est l'intru !")
   for x in list_joueur[:-1]:
-    print(compteur)
     player = await bot.fetch_user(list_joueur[compteur])
-    print(player)
+    
     await player.send("Le Débat est : "+list_débat[2] )
     compteur += 1
-    print(compteur)
   await ctx.channel.send("DM Envoyé")
   compteur = 0
-  print(compteur)
+  
 
-#----------------------------------------------------------
+#----------------------Ping----------------------------
 @bot.command()
 async def ping(ctx):
     await ctx.send('Pong! {0}'.format(round(bot.latency, 1)))
-#----------------------------------------------------------
+#-------------------Lancé de Dé----------------------------------
+@bot.command()
+async def roll(ctx,de=0):
+  de_fin = random.randint(0,int(de))
+  await ctx.channel.send("Tu est tombé sur "+ str(de_fin) ) 
+#-----------------------Help----------------------------------
+bot.remove_command('help')
 
-
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title='Bot Natyk', description='La liste des commandes sont:', color=0x00D0D0)
+    #embed.add_field(name='!list', value='Retourne une liste de Cryptomonnaie supporté' + ' Cryptomonnaie', inline=False)
+    #embed.add_field(name='!prix', value='Example: "!prix BTC"', inline=False)
+    #embed.add_field(name='!exchange', value='Example: "!exchange BTC ETH"',inline=False)
+    #embed.add_field(name='!history', value='Example: "!history BTC week."' + ' Les Période d\'utilisation sont par heure,jour,semaines,mois,année',inline=False)
+    embed.add_field(name='!help', value='Donne ce message', inline=False)
+    embed.add_field(name='!roll', value='Exemple: !roll <nombre> | Lance un dé ', inline=False)
+    embed.add_field(name='!play', value='Exemple: !play <youtube_url> | Joue une video youtube', inline=False)
+    embed.add_field(name='!ping', value='Exemple: !ping | Test le temps de reponse', inline=False)
+    embed.add_field(name='!addplayer', value='Exemple: !addplayer @nomdujoueur | Ajoute un joueur au jeux du débat', inline=False)
+    embed.add_field(name='!intru', value='Exemple: !intru | Lance le jeux du Débat', inline=False)
+    embed.add_field(name='!randoom', value='Exemple: !randoom '+"|Tire une image au hasard dans la bibliothèque d\'image", inline=False)
+    await ctx.send(embed=embed)
 
 #-------------------------------------
 @bot.command()

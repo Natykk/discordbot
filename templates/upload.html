@@ -1,54 +1,99 @@
-
 <style>
-body {
-  background-color: whitesmoke;
-  background-image: url("https://www.transparenttextures.com/patterns/lyonnette.png");
-  border-bottom: 0px solid black;
-  height: 600px;
-  display: flex;
-  justify-content:center;
-  align-items: center;
+body{
+  background: rgba(0,0,0,0.9);
 }
-
-/* === Wrapper Styles === */
-#FileUpload {
-  display: flex;
-  justify-content: center;
+form{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -100px;
+  margin-left: -250px;
+  width: 500px;
+  height: 200px;
+  border: 4px dashed #fff;
 }
-.wrapper {
-  margin: 30px;
-  padding: 10px;
-  box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
-  border-radius: 10px;
-  background-color: white;
-  width: px;
+form p{
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 170px;
+  color: #ffffff;
+  font-family: Arial;
 }
-
-/* === Upload Box === */
-.upload {
-  margin: 10px;
-  height: 100px;
-  border: 8px dashed #e6f5e9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
+form input{
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  opacity: 0;
 }
-
-
-.form {
-  margin-top: 35px;
+form button{
+  margin: 0;
+  color: #fff;
+  background: #16a085;
+  border: none;
+  width: 508px;
+  height: 35px;
+  margin-top: -20px;
+  margin-left: -4px;
+  border-radius: 4px;
+  border-bottom: 4px solid #117A60;
+  transition: all .2s ease;
+  outline: none;
+}
+form button:hover{
+  background: #149174;
+	color: #0C5645;
+}
+form button:active{
+  border:0;
 }
 </style>
+<script>
+$(document).ready(function(){
+  $('form input').change(function () {
+    $('form p').text(this.files.length + " Fichiers sélectionné");
+  });
+});
+</script>
+<!---
+<!doctype html>
+<title>Bot Natyk Web Interface</title>
 <body>
-<div id="FileUpload">
-  <div class="wrapper">
-    <div class="upload">
-      <form action = "https://discordbot.natykk.repl.co/uploader" method = "POST" 
-         enctype = "multipart/form-data" class="form">
-         <input type = "file" name = "file" value="Parcourir..."/>
-         <input type = "submit" value="Upload"/>
-    </div>
-  </div>
-</div>
+<h2>Selectionne les fichiers</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+<form method="post" action="https://discordbot.natykk.repl.co/uploader" enctype="multipart/form-data">
+    <dl>
+		<p>
+      <div class="wrapper">
+        <div class="file-upload">
+			    <input type="file" name="files[]" multiple="true" autocomplete="off" required>
+          <i class="fa fa-arrow-up"></i>
+        </div>
+      </div>
+
+		</p>
+    </dl>
+    <p>
+		 <input type="submit" value="Upload">
+	</p>
+</form>
 </body>
+ -->
+<form method="post" action="https://discordbot.natykk.repl.co/uploader" enctype="multipart/form-data">
+  <input type="file" name="files[]" multiple="true" autocomplete="off" required>
+  <p>Glisse tes fichiers ou clique ici.</p>
+  <button type="submit">Upload</button>
+</form>

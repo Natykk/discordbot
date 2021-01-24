@@ -1,5 +1,5 @@
 import random
-import webpage
+import upload
 import music
 import discord
 from discord.ext import tasks, commands
@@ -239,5 +239,5 @@ async def test(ctx):
     await ctx.send('Salut ! {0}'.format(ctx.author))
 
 
-webpage.keep_alive()
+upload.keep_alive()
 bot.run(os.getenv('TOKEN'))

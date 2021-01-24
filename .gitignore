@@ -4,8 +4,8 @@ crypto.py
 temp.py
 music.py
 *.cpython-38.pyc
-poetry.lock
-pyproject.toml
+*.lock
+*.toml
 .gitignore
 ### Images ###
 # JPEG

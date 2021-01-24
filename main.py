@@ -166,7 +166,7 @@ async def on_message(message: discord.Message):
 #--------------------------------Jeux Débat--------------------------
 
 list_joueur=[]
-list_débat=["Beurre Doux ou Demi-sel","Céréal Avant ou Après le lait","Pain au Chocolat ou Chocolatine","Les jeux vidéos rendent-ils violent?","Les utilisateurs de trotinettes sont-ils des connards?","En Politique Plutôt Gauche ou droite","pour ou contre Le mariage gay ?","Les Illuminatis sont ils un complot ?","Star Wars contre Star Trek ?","disney contre pixar","qui est le plus fort entre batman ou superman ?","les films en 3D au cinema pour ou contre","pour ou contre la serie lost ? ","est ce que sucer c'est tromper ?","doit on peter devant son conjoint","Tu préfère pleurer en ferrari ou rire sur un velo","Tupac ou Biggie ?","Pas de sujet dite ce que vous voulez","tu prefere savoir comment tu vas mourrir ou quand tu vas mourrir ?","en nage synchronisée, si une nageuse se noie, les autres se noient-elles aussi?"]
+
 @bot.command()
 async def addplayer(ctx,user_id=None):
   if user_id != None:
@@ -192,18 +192,28 @@ async def listplayer(ctx):
 @bot.command()
 async def intru(ctx):
   compteur = 0
-  random.shuffle(list_débat)
-  random.shuffle(list_joueur)
+  #random.shuffle(list_débat)Vieille methode pour choisir le débat
+  random.shuffle(list_joueur) 
+  if os.path.exists('debat.txt'):
+      lines = open('debat.txt', encoding='utf-8').read().splitlines()
+      text = random.choice(lines)  
   target = await bot.fetch_user(list_joueur[-1])
   await target.send("Tu est l'intru !")
   for x in list_joueur[:-1]:
     player = await bot.fetch_user(list_joueur[compteur])
     
-    await player.send("Le Débat est : "+list_débat[2] )
+    await player.send("Le Débat est : "+str(text) )
     compteur += 1
   await ctx.channel.send("DM Envoyé")
   compteur = 0
   
+@bot.command()
+async def ajoutdebat(ctx,db=None):
+  if db !=None:
+    f = open('debat.txt',"a")
+    f.write("\n")
+    f.write(str(db))
+    f.close
 
 #----------------------Ping----------------------------
 @bot.command()
@@ -232,7 +242,7 @@ async def help(ctx):
     embed.add_field(name='!intru', value='Exemple: !intru | Lance le jeux du Débat', inline=False)
     embed.add_field(name='!randoom', value='Exemple: !randoom '+"|Tire une image au hasard dans la bibliothèque d\'image", inline=False)
     await ctx.send(embed=embed)
-
+    embed.add_field(name='!ajoutdebat', value='Exemple: !ajoutdebat <debat> | Ajoute un débat dans la liste', inline=False)
 #-------------------------------------
 @bot.command()
 async def test(ctx):

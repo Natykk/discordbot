@@ -25,7 +25,8 @@ async def on_ready():
 
 
 @bot.command(name='randoom')
-async def random_gex(ctx):
+async def randoom(ctx):
+    print("Commande randoom Effectué")
     if os.path.exists('textlist.txt'):
         lines = open('textlist.txt', encoding='utf-8').read().splitlines()
         text = random.choice(lines)
@@ -123,6 +124,7 @@ def play_song(client, queue, song):
 
 @bot.command()
 async def play(ctx, url):
+    print("Commande ytb play Effectué")
     print("play")
     client = ctx.guild.voice_client
 
@@ -191,6 +193,7 @@ async def listplayer(ctx):
 
 @bot.command()
 async def intru(ctx):
+  print("Commande Jeux débat Effectué")
   compteur = 0
   #random.shuffle(list_débat)Vieille methode pour choisir le débat
   random.shuffle(list_joueur) 
@@ -214,14 +217,17 @@ async def ajoutdebat(ctx,db=None):
     f.write("\n")
     f.write(str(db))
     f.close
-
+  else:
+    await ctx.channel.send("Ba alors on arrive pas a écrire ?")
 #----------------------Ping----------------------------
 @bot.command()
 async def ping(ctx):
+    print("Commande Ping Effectué")
     await ctx.send('Pong! {0}'.format(round(bot.latency, 1)))
 #-------------------Lancé de Dé----------------------------------
 @bot.command()
 async def roll(ctx,de=0):
+  print("Commande Roll Effectué")
   de_fin = random.randint(0,int(de))
   await ctx.channel.send("Tu est tombé sur "+ str(de_fin) ) 
 #-----------------------Help----------------------------------
@@ -230,6 +236,7 @@ bot.remove_command('help')
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title='Bot Natyk', description='La liste des commandes sont:', color=0x00D0D0)
+    print("Commande Help Effectué")
     #embed.add_field(name='!list', value='Retourne une liste de Cryptomonnaie supporté' + ' Cryptomonnaie', inline=False)
     #embed.add_field(name='!prix', value='Example: "!prix BTC"', inline=False)
     #embed.add_field(name='!exchange', value='Example: "!exchange BTC ETH"',inline=False)
@@ -240,9 +247,44 @@ async def help(ctx):
     embed.add_field(name='!ping', value='Exemple: !ping | Test le temps de reponse', inline=False)
     embed.add_field(name='!addplayer', value='Exemple: !addplayer @nomdujoueur | Ajoute un joueur au jeux du débat', inline=False)
     embed.add_field(name='!intru', value='Exemple: !intru | Lance le jeux du Débat', inline=False)
-    embed.add_field(name='!randoom', value='Exemple: !randoom '+"|Tire une image au hasard dans la bibliothèque d\'image", inline=False)
-    await ctx.send(embed=embed)
+    embed.add_field(name='!randoom', value='Exemple: !randoom'+"|Tire une image au hasard dans la bibliothèque d\'image", inline=False)
     embed.add_field(name='!ajoutdebat', value='Exemple: !ajoutdebat <debat> | Ajoute un débat dans la liste', inline=False)
+    embed.add_field(name='!pfc', value='Exemple: !pfc <0-1-2> | Joué a Pierre-Feuille-Ciseaux en Choisissant un chiffre 0 , 1 ou 2  ', inline=False)
+    await ctx.send(embed=embed)
+
+#-------------------Pierre feuille Ciseaux------------
+
+
+
+@bot.command()
+async def pfc(ctx,choix):
+
+  #assign a random play to the computer
+  # Pierre - Feuille - Ciseaux
+  print("Commande PFC effectué")
+  computer = random.randint(0,2)
+  #print(computer,"<--- ORDI")
+  #print(choix,"<--- choix joueur")
+  if choix == computer:
+      await ctx.send('Egalité !')
+  elif choix == "0":#Pierre
+      if computer == 1: #Feuille
+          await ctx.send("Perdu ! , La Feuille couvre la Pierre")
+      else:
+          await ctx.send("Bravo ! ,la Pierre ECRASE les Ciseaux")
+  elif choix == "1":#Feuille
+      if computer == 2:#ciseaux
+          await ctx.send("Et c'est un échec du joueur {0} , les Ciseaux coupent la Feuille".format(ctx.author))
+      else:
+          await ctx.send("Et c'est gagner ! La Feuille couvre la Pierre")
+  elif choix == "2":#ciseaux
+      if computer == 0:#Pierre
+          await ctx.send("Oh le looser ! La Pierre ECRASE les Ciseaux")
+      else:
+          await ctx.send("La Win est présente, Les Ciseaux coupent *délicatement* la Feuille")
+  else:
+    print("On avait dis pas le Puit !")
+
 #-------------------------------------
 @bot.command()
 async def test(ctx):

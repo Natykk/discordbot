@@ -1,6 +1,6 @@
 import random
+from coinbase.wallet.client import Client
 import upload
-import music
 import discord
 from discord.ext import tasks, commands
 from discord import File
@@ -237,10 +237,6 @@ bot.remove_command('help')
 async def help(ctx):
     embed = discord.Embed(title='Bot Natyk', description='La liste des commandes sont:', color=0x00D0D0)
     print("Commande Help Effectué")
-    #embed.add_field(name='!list', value='Retourne une liste de Cryptomonnaie supporté' + ' Cryptomonnaie', inline=False)
-    #embed.add_field(name='!prix', value='Example: "!prix BTC"', inline=False)
-    #embed.add_field(name='!exchange', value='Example: "!exchange BTC ETH"',inline=False)
-    #embed.add_field(name='!history', value='Example: "!history BTC week."' + ' Les Période d\'utilisation sont par heure,jour,semaines,mois,année',inline=False)
     embed.add_field(name='!help', value='Donne ce message', inline=False)
     embed.add_field(name='!roll', value='Exemple: !roll <nombre> | Lance un dé ', inline=False)
     embed.add_field(name='!play', value='Exemple: !play <youtube_url> | Joue une video youtube', inline=False)
@@ -250,6 +246,16 @@ async def help(ctx):
     embed.add_field(name='!randoom', value='Exemple: !randoom'+"|Tire une image au hasard dans la bibliothèque d\'image", inline=False)
     embed.add_field(name='!ajoutdebat', value='Exemple: !ajoutdebat <debat> | Ajoute un débat dans la liste', inline=False)
     embed.add_field(name='!pfc', value='Exemple: !pfc <0-1-2> | Joué a Pierre-Feuille-Ciseaux en Choisissant un chiffre 0 , 1 ou 2  ', inline=False)
+    embed.add_field(name='!gages', value='Exemple: !gages | Tire un gages au hasard dans la liste', inline=False)
+    embed.add_field(name='!addgages', value='Exemple: !addgages <le_gages> | Ajoute un gages dans la liste de gages', inline=False)
+    embed.add_field(name='!addplayerbmg', value='Exemple: !addplayer @nomdujoueur | Ajoute un joueur au Blanc manger coco', inline=False)    
+    embed.add_field(name='!newbmg', value='Exemple: !newbmg | Lance la partie de Blanc manger coco ', inline=False)
+    embed.add_field(name='!bmg', value='Exemple: !bmg | Tire une nouvelle carte noir ', inline=False)
+    embed.add_field(name='!piochebmg', value='Exemple: !piochebmg <nombre_carte> | Pioche le nombre de carte indiqué ', inline=False)
+    embed.add_field(name='!listplayerbmg', value='Exemple: !listplayerbmg | Liste tout les jeux inscrit ', inline=False)
+    embed.add_field(name='!listcrypto', value='Example: !listcrypto | affiche la liste des Cryptomonnaie suporté', inline=False)
+    embed.add_field(name='!prixcrypto', value='Example: "!prixcrypto <crypto> | Affiche le prix d\'achat et de vente de la Cryptomonnaie"', inline=False)
+    embed.add_field(name='!tauxchange', value='Example: "!tauxchange <crypto1> <crypto2> | Affiche de taux de change d\'une Cryptomonnaie par rapport a l\'autre',inline=False)
     await ctx.send(embed=embed)
 
 #-------------------Pierre feuille Ciseaux------------
@@ -285,7 +291,163 @@ async def pfc(ctx,choix):
   else:
     print("On avait dis pas le Puit !")
 
-#-------------------------------------
+
+#------------------------------------Gages-----------------------------------------
+@bot.command()
+async def gages(ctx):
+    print("Commande gages Effectué")
+    if os.path.exists('gages.txt'):
+        lines = open('gages.txt', encoding='utf-8').read().splitlines()
+        text = random.choice(lines)
+    await ctx.send(text)
+
+@bot.command()
+async def addgages(ctx,db=None):
+  if db !=None:
+    f = open('gages.txt',"a")
+    f.write("\n")
+    f.write(str(db))
+    f.close
+  else:
+    await ctx.channel.send("Ba alors on arrive pas a écrire ?")
+
+#---------------------------Blanc Manger Coco---------------------------
+
+
+
+list_joueur_bmg=[]
+
+@bot.command()
+async def addplayerbmg(ctx,user_id=None):
+  if user_id != None:
+    try:
+      target = await bot.fetch_user(user_id)
+      list_joueur_bmg.append(int(user_id))
+      await ctx.channel.send("Le Joueur: "+target.name+" a été ajouté")
+    except:
+      await ctx.channel.send("Le joueur n'a pas pu être envoyé.")
+  else:
+    await ctx.channel.send("Ta pas oublié un truc ?")
+
+@bot.command()
+async def clearplayerbmg(ctx):
+  list_joueur_bmg.clear()
+  print(list_joueur)
+  await ctx.channel.send("La Liste de Joueur a été vider")
+
+@bot.command()
+async def listplayerbmg(ctx):
+  cmp = 0
+  for a in list_joueur_bmg[:]:
+    listpj = await bot.fetch_user(list_joueur_bmg[cmp])
+    await ctx.channel.send(listpj)
+    print(list_joueur_bmg)
+    cmp +=1
+
+@bot.command()
+async def bmg(ctx):
+  print("Commande Blanc manger Coco Effectué")
+  random.shuffle(list_joueur_bmg) 
+  if os.path.exists('./bmg/noir/'):
+          image = os.listdir('./bmg/noir/')
+          imgString = random.choice(image)
+          path = "./bmg/noir/" + imgString
+          await ctx.send(file=File(path))
+  
+
+@bot.command()
+async def newbmg(ctx):
+  print("Commande newbmg effectué")
+  bmg()
+  compteur = 0
+  for x in list_joueur_bmg[:]:
+    deck = 0
+    while deck != 5:
+      player = await bot.fetch_user(list_joueur_bmg[compteur])
+      image = os.listdir('./bmg/blanc/')
+      imgString = random.choice(image)
+      path = "./bmg/blanc/" + imgString
+      await player.send(file=File(path))
+      print("a")
+      deck+=1
+    compteur += 1
+  await ctx.channel.send("Carte Distribué")
+
+@bot.command()
+async def piochebmg(ctx,args):
+  print("commande Piochebmg effectué")
+  for _ in args:
+    image = os.listdir('./bmg/blanc/')
+    imgString = random.choice(image)
+    path = "./bmg/blanc/" + imgString
+    await ctx.author.send(file=File(path))
+
+#-------------------------------Crypto Command---------------------------------
+
+client = Client('z05oObIt9hGp0pdC', 'UR8h1c8qxspl5mlmXcPkJrfmhHziEZED')
+
+# build listcrypto of coinbase supported digital currencies
+coins = ['BTC', 'LTC', 'BCH', 'ETH', 'ETC', 'BAT', 'ZRX', 'EURC', 'XRP',
+        'EOS', 'XLM', 'LINK', 'DASH', 'ZEC', 'REP', 'DAI', 'XTZ']
+
+
+@bot.command()
+async def listcrypto(ctx):
+
+    # return listcrypto of coinbase supported digital currencies
+    value = ', '.join(coins)
+    embed = discord.Embed(title=value)
+    
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def prixcrypto(ctx, coin):
+    # return coin prices
+
+    try:
+        coin = coin.upper()
+        buy = client.get_buy_price(currency_pair = '{}-EUR'.format(coin))
+        sell = client.get_sell_price(currency_pair = '{}-EUR'.format(coin))
+        #spot = client.get_spot_price(currency_pair = '{}-EUR'.format(coin))
+        buyAmount = buy.get('amount')
+        sellAmount = sell.get('amount')
+        #spotAmount = spot.get('amount') Prix spot: {2}€
+        value = 'Prix d\'achat: {0}€, Prix de Vente: {1}€'.format(buyAmount, 
+                                                      sellAmount)
+        embed = discord.Embed(title=value)
+
+    except:
+        embed = discord.Embed(title='ERROR: Please check your syntax and' +
+                                    ' try again', color=0xff0000)
+
+    await ctx.send(embed=embed)
+
+
+
+@bot.command()
+async def tauxchange(ctx, coin_one, coin_two):
+    # return exchange rate from one coin to another
+
+    try:
+        coin_one = coin_one.upper()
+        coin_two = coin_two.upper()
+        getRates = client.get_exchange_rates(currency=coin_one)
+        rate = getRates.get('rates').get(coin_two)
+        try:
+            float(rate)
+            value = '1 {0} vaut {1} {2}'.format(coin_one, rate, coin_two)
+            embed = discord.Embed(title=value)
+        except ValueError:
+            embed = discord.Embed(title='Ce que tu fais n\'aucun sense')
+    except:
+        embed = discord.Embed(title='ERROR: Donnée d\'échange non disponible' + 
+                              ' Try again',color=0xff0000)
+
+    await ctx.send(embed=embed)
+
+
+#---------------------------------------------------------------------------
 @bot.command()
 async def test(ctx):
     await ctx.send('Salut ! {0}'.format(ctx.author))

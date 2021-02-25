@@ -13,6 +13,8 @@ PyNaCl = "^1.4.0"
 flask = "^1.1.2"
 werkzeug = "^1.0.1"
 coinbase = "^2.1.0"
+sentry-sdk = "^0.20.3"
+streamlink = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 

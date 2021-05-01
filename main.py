@@ -1,4 +1,5 @@
 import random
+import time
 from coinbase.wallet.client import Client
 import upload
 import discord
@@ -6,26 +7,11 @@ from discord.ext import commands
 from discord import File
 import os
 import youtube_dl
-import asyncio
+from asyncio import sleep
 players = {}
 musics = {}
 ytdl = youtube_dl.YoutubeDL()
 bot = commands.Bot(command_prefix='!')
-import sentry_sdk
-
-def traces_sampler(sampling_context):
-    # ...
-    # return a number between 0 and 1 or a boolean
-
-  sentry_sdk.init(
-    dsn="https://4a3128ca40f849b7b6cbc81853d8e399@o530942.ingest.sentry.io/5650980",
-
-    # To set a uniform sample rate
-    traces_sample_rate=1.0,
-
-    # Alternatively, to control sampling dynamically
-    traces_sampler=traces_sampler
-)
 
 #--------------------Message de startup et Random Image--------------------------
 @bot.event
@@ -84,10 +70,6 @@ async def clear(ctx, nombre : int):
 		await message.delete()
 
 
-#-----------------Musique-----------------------------------------
-for fName in os.listdir('./cogs'):
-  if fName.endswith('.py'):
-    bot.load_extension(f"cogs.{fName[:-3]}")
 #------------------------------DM Envoie et Ecoute-------------------------
 #-> Envoie
 @bot.command()
@@ -187,16 +169,15 @@ async def help(ctx):
     print("Commande Help Effectué")
     embed.add_field(name='!help', value='Donne ce message', inline=False)
     embed.add_field(name='!roll', value='Exemple: !roll <nombre> | Lance un dé ', inline=False)
-    embed.add_field(name='!play', value='Exemple: !play <youtube_url> | Joue une video youtube', inline=False)
     embed.add_field(name='!ping', value='Exemple: !ping | Test le temps de reponse', inline=False)
-    embed.add_field(name='!addplayer', value='Exemple: !addplayer @nomdujoueur | Ajoute un joueur au jeux du débat', inline=False)
+    embed.add_field(name='!addplayer', value='Exemple: !addplayer <iddujoueur> | Ajoute un joueur au jeux du débat', inline=False)
     embed.add_field(name='!intru', value='Exemple: !intru | Lance le jeux du Débat', inline=False)
     embed.add_field(name='!randoom', value='Exemple: !randoom'+"|Tire une image au hasard dans la bibliothèque d\'image", inline=False)
     embed.add_field(name='!ajoutdebat', value='Exemple: !ajoutdebat <debat> | Ajoute un débat dans la liste', inline=False)
     embed.add_field(name='!pfc', value='Exemple: !pfc <0-1-2> | Joué a Pierre-Feuille-Ciseaux en Choisissant un chiffre 0 , 1 ou 2  ', inline=False)
     embed.add_field(name='!gages', value='Exemple: !gages | Tire un gages au hasard dans la liste', inline=False)
     embed.add_field(name='!addgages', value='Exemple: !addgages <le_gages> | Ajoute un gages dans la liste de gages', inline=False)
-    embed.add_field(name='!addplayerbmg', value='Exemple: !addplayer @nomdujoueur | Ajoute un joueur au Blanc manger coco', inline=False)    
+    embed.add_field(name='!addplayerbmg', value='Exemple: !addplayerbmg <iddujoueur> | Ajoute un joueur au Blanc manger coco', inline=False)    
     embed.add_field(name='!newbmg', value='Exemple: !newbmg | Lance la partie de Blanc manger coco ', inline=False)
     embed.add_field(name='!bmg', value='Exemple: !bmg | Tire une nouvelle carte noir ', inline=False)
     embed.add_field(name='!piochebmg', value='Exemple: !piochebmg <nombre_carte> | Pioche le nombre de carte indiqué ', inline=False)
@@ -204,6 +185,7 @@ async def help(ctx):
     embed.add_field(name='!listcrypto', value='Example: !listcrypto | affiche la liste des Cryptomonnaie suporté', inline=False)
     embed.add_field(name='!prixcrypto', value='Example: "!prixcrypto <crypto> | Affiche le prix d\'achat et de vente de la Cryptomonnaie"', inline=False)
     embed.add_field(name='!tauxchange', value='Example: "!tauxchange <crypto1> <crypto2> | Affiche de taux de change d\'une Cryptomonnaie par rapport a l\'autre',inline=False)
+    embed.add_field(name='!chrono', value='Exemple: !chrono <durée> | Chronomètre une durée en seconde', inline=False)
     await ctx.send(embed=embed)
 
 #-------------------Pierre feuille Ciseaux------------
@@ -266,7 +248,7 @@ async def addgages(ctx,db=None):
 list_joueur_bmg=[]
 
 @bot.command()
-async def addplayerbmg(ctx,user_id=None):
+async def addplayerbmc(ctx,user_id=None):
   if user_id != None:
     try:
       target = await bot.fetch_user(user_id)
@@ -278,13 +260,13 @@ async def addplayerbmg(ctx,user_id=None):
     await ctx.channel.send("Ta pas oublié un truc ?")
 
 @bot.command()
-async def clearplayerbmg(ctx):
+async def clearplayerbmc(ctx):
   list_joueur_bmg.clear()
   print(list_joueur)
   await ctx.channel.send("La Liste de Joueur a été vider")
 
 @bot.command()
-async def listplayerbmg(ctx):
+async def listplayerbmc(ctx):
   cmp = 0
   for a in list_joueur_bmg[:]:
     listpj = await bot.fetch_user(list_joueur_bmg[cmp])
@@ -293,7 +275,7 @@ async def listplayerbmg(ctx):
     cmp +=1
 
 @bot.command()
-async def bmg(ctx):
+async def bmc(ctx):
   print("Commande Blanc manger Coco Effectué")
   random.shuffle(list_joueur_bmg) 
   if os.path.exists('./bmg/noir/'):
@@ -304,9 +286,9 @@ async def bmg(ctx):
   
 
 @bot.command()
-async def newbmg(ctx):
-  print("Commande newbmg effectué")
-  bmg()
+async def newbmc(ctx):
+  print("Commande newbmc effectué")
+  bmc()
   compteur = 0
   for x in list_joueur_bmg[:]:
     deck = 0
@@ -316,15 +298,14 @@ async def newbmg(ctx):
       imgString = random.choice(image)
       path = "./bmg/blanc/" + imgString
       await player.send(file=File(path))
-      print("a")
       deck+=1
     compteur += 1
   await ctx.channel.send("Carte Distribué")
 
 @bot.command()
-async def piochebmg(ctx,args):
-  print("commande Piochebmg effectué")
-  for _ in args:
+async def piochebmc(ctx,args):
+  print("commande Piochebmc effectué")
+  for a in args:
     image = os.listdir('./bmg/blanc/')
     imgString = random.choice(image)
     path = "./bmg/blanc/" + imgString
@@ -394,6 +375,21 @@ async def tauxchange(ctx, coin_one, coin_two):
 
     await ctx.send(embed=embed)
 
+#--------------------------------Chrono------------------------------------
+@bot.command()
+async def chrono(ctx,temps):
+  now = time.time()
+  temps = float(temps)
+  future = now + temps
+  while True:
+    if time.time() > future:
+      await ctx.channel.send("CHRONO !!!")
+      break
+#-----------------------------Autorole--------------------------------------
+@bot.event
+async def membre_join(membre):
+  role = discord.utils.get(membre.server.roles, name='Fiat Multiplat')
+  await bot.add_roles(membre,role)
 
 #---------------------------------------------------------------------------
 @bot.command()
